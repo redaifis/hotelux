@@ -20,7 +20,13 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
 
-    <!-- Other Stylesheets -->
+    <!-- Other Stylesheets & scripts -->
+
+    @if(Route::currentRouteName() === 'show-room')
+        {{-- <link rel="stylesheet" href="https://allyoucan.cloud/cdn/icofont/1.0.1/icofont.css" integrity="sha384-jbCTJB16Q17718YM9U22iJkhuGbS0Gd2LjaWb4YJEZToOPmnKDjySVa323U+W7Fv" crossorigin="anonymous"> --}}
+        <script src="https://js.stripe.com/v3/"></script>
+    @endif
+
 
 </head>
 <body>

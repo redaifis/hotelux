@@ -17,7 +17,7 @@ class JWTAuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'checkAuth']]);
     }
 
     /**
@@ -27,21 +27,32 @@ class JWTAuthController extends Controller
      */
     public function register(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
-            'name' => 'required|between:2,100',
+            'first_name' => 'required|between:2,100',
+            'last_name' => 'required|between:2,100',
             'email' => 'required|email|unique:users|max:50',
             'password' => 'required|confirmed|string|min:6',
+            // 'phone' => 'required',
+            // 'country' => 'required|string',
+            // 'city' => 'required|string',
+            // 'address' => 'required|string',
+            // 'postal_code' => 'required|string',
+            // 'state' => 'required|string',
         ]);
 
-        $user = User::create(array_merge(
-                    $validator->validated(),
-                    ['password' => bcrypt($request->password)]
-                ));
+        $customer = User::create(array_merge(
+            $validator->validated(),
+            ['password' => bcrypt($request->password)]
+        ));
 
         return response()->json([
             'message' => 'Successfully registered',
-            'user' => $user
+            'user' => $customer
         ], 201);
+
+
+
     }
 
     /**
@@ -99,6 +110,11 @@ class JWTAuthController extends Controller
         return $this->createNewToken(auth()->refresh());
     }
 
+    public function checkAuth(){
+        $auth = Auth::check();
+        return response()->json(compact('auth'), 200);
+    }
+
     /**
      * Get the token array structure.
      *
@@ -110,8 +126,11 @@ class JWTAuthController extends Controller
     {
         return response()->json([
             'access_token' => $token,
+            'user' => Auth::user(),
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
+
+
 }

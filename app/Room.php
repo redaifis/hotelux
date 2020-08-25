@@ -15,5 +15,25 @@ class Room extends Model
      */
     protected $casts = [
         'images' => 'array',
+        'price' => 'float'
     ];
+
+    public function bookings(){
+        return $this->hasMany('App\Booking');
+    }
+
+    public function reviews(){
+        return $this->hasMany('App\Review');
+    }
+
+    public function recommanded(){
+        return $this->whereHas('reviews', function($q){
+            return $q->where('rating', '>=', 4);
+        });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

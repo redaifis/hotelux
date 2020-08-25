@@ -14,6 +14,10 @@ import store from './store/store'
 // Fontawesome free
 import '@fortawesome/fontawesome-free'
 
+// Use v-calendar & v-date-picker components
+import VCalendar from 'v-calendar'
+Vue.use(VCalendar)
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -22,8 +26,14 @@ import '@fortawesome/fontawesome-free'
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-const files = require.context('./app/pages', true, /\.vue$/i)
-files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+const appViews = require.context('./app/views', true, /\.vue$/i)
+appViews.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], appViews(key).default))
+
+const authViews = require.context('./app/auth', true, /\.vue$/i)
+authViews.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], authViews(key).default))
+
+const customerViews = require.context('./app/customer', true, /\.vue$/i)
+customerViews.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], customerViews(key).default))
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
@@ -33,7 +43,30 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+// Vue Router - Admin Routes
+import VueRouter from 'vue-router'
+import Axios from 'axios';
+
+Vue.use(VueRouter)
+
+const routes = [
+  { path: '/customer', component: require('./app/customer/views/Dashboard.vue').default },
+  { path: '/customer/bookings', component: require('./app/customer/views/BookingsList.vue').default },
+  { path: '/customer/bookings/:id', component: require('./app/customer/views/Booking.vue').default },
+  { path: '/customer/Profile', component: require('./app/customer/views/Profile.vue').default },
+]
+
+const router = new VueRouter({
+    mode: 'history',
+  routes
+})
+
+// Default axios headers
+const token = localStorage.getItem('user-token') || null
+axios.defaults.headers.common['Authorization'] =  `Bearer ${token}`// for all requests
+
 const app = new Vue({
     el: '#app',
-    store
+    router,
+    store,
 });

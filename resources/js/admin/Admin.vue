@@ -1,5 +1,5 @@
 <template>
-<div v-if="$store.state.currentUser">
+<div v-if="$store.getters.isAdmin">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-primary shadow">
         <a class="navbar-brand" href="/">Hotelux</a>
         <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" @click="toggleSidebar" href="#"><i class="fas fa-bars"></i></button>
@@ -37,9 +37,9 @@
                             Rooms
                         </router-link>
 
-                        <router-link to="/admin/articles" class="nav-link">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book link-icons"></i></div>
-                            Articles
+                        <router-link to="/admin/reviews" class="nav-link">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-alt link-icons"></i></div>
+                            Reviews
                         </router-link>
 
                         <router-link to="/admin/customers" class="nav-link">
@@ -61,7 +61,7 @@
                 </div>
                 <div class="sb-sidenav-footer bg-primary ">
                     <div class="small">Logged in as:</div>
-                    {{$store.state.currentUser.name}}
+                    {{$store.state.user.first_name + ' ' + $store.state.user.last_name}}
                 </div>
             </nav>
         </div>
@@ -96,6 +96,7 @@
 
 <script>
 // import 'vue-router'
+
 export default {
     methods: {
         toggleSidebar() {
@@ -103,20 +104,23 @@ export default {
         },
         getUserProfile(){
 
-            this.$store.commit('getUserProfile')
+            this.$store.dispatch('getUserProfile')
 
         },
         logout(){
-            this.$store.commit('logout')
+            this.$store.dispatch('logout')
         }
     },
-    mounted() {
+    created() {
 
         // Initiate the token for all axios requests
         const token = localStorage.getItem('user-token')
         axios.defaults.headers.common['Authorization'] =  `Bearer ${token}`// for all requests
 
-        this.getUserProfile()
+        // Check if user is a logged in admin
+        this.$store.dispatch('isUserLoggedIn')
+        if(!this.$store.getters.isAdmin) window.location = '/login'
+
     }
 }
 </script>
@@ -124,14 +128,20 @@ export default {
 <style scoped>
 .sb-nav-link-icon {
     width: 20px;
+    color: none;
 }
 
 .router-link-exact-active,
 .router-link-exact-active .link-icons {
-    color: #fff !important
+    color: #EAAE49 !important
 }
 
 .sb-topnav {
     background-color: #3A3F51
+}
+
+.nav-link:hover{
+    color: #EAAE49 !important
+
 }
 </style>

@@ -17,8 +17,7 @@ class CreateBookingsTable extends Migration
             $table->id();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->foreignId('room_id')->constrained()->cascadeOnDelete();
-            $table->integer('adults');
-            $table->integer('children');
+            $table->integer('guests');
             $table->dateTime('check_in');
             $table->dateTime('check_out');
             $table->timestamps();

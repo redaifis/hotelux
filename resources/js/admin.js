@@ -2,7 +2,7 @@
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
- */
+ **/
 
 
 
@@ -16,26 +16,25 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/admin', component: require('./admin/pages/Dashboard.vue').default },
-  { path: '/admin/bookings', component: require('./admin/pages/Bookings.vue').default },
-  { path: '/admin/rooms', component: require('./admin/pages/Rooms.vue').default },
-  { path: '/admin/articles', component: require('./admin/pages/Articles.vue').default },
-  { path: '/admin/customers', component: require('./admin/pages/Customers.vue').default },
-  { path: '/admin/settings', component: require('./admin/pages/Settings.vue').default },
+    { path: '/admin', component: require('./admin/views/Dashboard.vue').default },
+    { path: '/admin/bookings', component: require('./admin/views/Bookings.vue').default },
+    { path: '/admin/rooms', component: require('./admin/views/Rooms.vue').default },
+    { path: '/admin/reviews', component: require('./admin/views/Reviews.vue').default },
+    { path: '/admin/customers', component: require('./admin/views/Customers.vue').default },
+    { path: '/admin/settings', component: require('./admin/views/Settings.vue').default },
 ]
 
 const router = new VueRouter({
     mode: 'history',
-  routes
+    routes
 })
 
+// Text editor CKEditor
+import CKEditor from 'ckeditor4-vue';
 
- // Text editor CKEditor
- import CKEditor from 'ckeditor4-vue';
+Vue.use(CKEditor);
 
- Vue.use( CKEditor );
-
- // VUEX
+// VUEX
 import store from './store/store'
 
 /**
@@ -56,6 +55,8 @@ Vue.component('admin', require('./admin/Admin.vue').default);
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+
+
 
 const admin = new Vue({
     router,

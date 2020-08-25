@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,11 +14,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
-Auth::routes();
+// register & login page
+Route::get('/login', 'MainController@login')->name('login');
+Route::get('/register', 'MainController@register')->name('register');
 
 Route::get('/', 'MainController@landingPage');
+
+// Customer dashboard
+Route::group(['prefix' => 'customer'], function () {
+    Route::get('{pages?}/{params?}', function () {
+        return view('customer.index');
+    });
+});
 
 // admin dashboard
 
@@ -30,4 +38,13 @@ Route::group(['prefix' => 'admin'], function () {
     });
 });
 
+Route::group(['prefix' => 'rooms'], function () {
+    route::get('search/{checkin?}/{checkout?}/{guests?}','MainController@searchRooms');
+    route::get('{slug}', 'MainController@showRoom')->name('show-room');
+});
 
+Route::group(['prefix' => 'blog'], function () {
+    route::get('{id}', 'MainController@blog');
+});
+
+Route::view('/thank-you', 'app.ThankYou');
