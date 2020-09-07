@@ -69,12 +69,14 @@ export default {
     },
     methods: {
         async getBookings(page = 1) {
+            this.$store.state.isLoading = true
             try {
                 const result = await axios.get(`/api/admin/bookings?page=${page}`)
                 this.bookings = result.data.bookings
             } catch (error) {
                 if(error.response.status === 401) this.$store.dispatch('logout')
             }
+            this.$store.state.isLoading = false
         },
         calculateNights(from, to) {
             return ((new Date(to).getTime() - new Date(from).getTime()) / (1000 * 3600 * 24)).toFixed()

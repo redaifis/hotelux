@@ -11,8 +11,9 @@ export default new Vuex.Store({
 
     },
     mutations:{
-        updateProfile(state, profile){
 
+        setUser(state, data){
+            state.user = data.user
         }
     },
     getters: {
@@ -21,7 +22,7 @@ export default new Vuex.Store({
         },
         isAdmin(state) {
             return state.user.role === 'admin' && state.userToken ? true : false
-        },
+        }
     },
     actions: {
 
@@ -54,7 +55,7 @@ export default new Vuex.Store({
         },
 
 
-        async registerUser({}, newUser) {
+        async registerUser({state}, newUser) {
 
             state.isLoading = true
 
@@ -105,14 +106,17 @@ export default new Vuex.Store({
 
             state.isLoading = true
         },
-        async isUserLoggedIn(){
+        async isUserLoggedIn({commit}){
             try {
                 const result = await axios.get('/api/auth/check')
-                if(!result.data.auth){
+                if(!result.data.user){
                     localStorage.removeItem('user-token')
                     localStorage.removeItem('user')
                     window.location.replace('/login')
                 }
+
+                commit('setUser', {user: result.data.user})
+
 
 
             } catch (error) {

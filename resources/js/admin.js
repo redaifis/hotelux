@@ -22,6 +22,7 @@ const routes = [
     { path: '/admin/reviews', component: require('./admin/views/Reviews.vue').default },
     { path: '/admin/customers', component: require('./admin/views/Customers.vue').default },
     { path: '/admin/settings', component: require('./admin/views/Settings.vue').default },
+    { path: '/admin/profile', component: require('./admin/views/Profile.vue').default },
 ]
 
 const router = new VueRouter({
@@ -36,6 +37,7 @@ Vue.use(CKEditor);
 
 // VUEX
 import store from './store/store'
+
 
 /**
  * The following block of code may be used to automatically register your

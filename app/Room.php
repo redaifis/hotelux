@@ -26,12 +26,6 @@ class Room extends Model
         return $this->hasMany('App\Review');
     }
 
-    public function recommanded(){
-        return $this->whereHas('reviews', function($q){
-            return $q->where('rating', '>=', 4);
-        });
-    }
-
     public function getRouteKeyName()
     {
         return 'slug';

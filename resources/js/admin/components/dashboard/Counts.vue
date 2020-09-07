@@ -7,7 +7,7 @@
                     <span class="display-4 d-block">{{counts.customers}}</span>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View Details</a>
+                    <router-link class="small text-white stretched-link" to="/admin/customers">View Details</router-link>
                     <div class="small text-white">
                         <i class="fas fa-angle-right"></i>
                     </div>
@@ -21,7 +21,7 @@
                     <span class="display-4 d-block">{{counts.rooms}}</span>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View Details</a>
+                    <router-link class="small text-white stretched-link" to="/admin/rooms">View Details</router-link>
                     <div class="small text-white">
                         <i class="fas fa-angle-right"></i>
                     </div>
@@ -52,7 +52,7 @@
                     <span class="display-4 d-block">{{counts.bookings}}</span>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View Details</a>
+                    <router-link class="small text-white stretched-link" to="/admin/bookings">View Details</router-link>
                     <div class="small text-white">
                         <i class="fas fa-angle-right"></i>
                     </div>

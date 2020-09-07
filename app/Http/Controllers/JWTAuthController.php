@@ -7,9 +7,13 @@ use App\Http\Controllers\Controller;
 use Validator;
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Facades\Password;
 
 class JWTAuthController extends Controller
 {
+
     /**
      * Create a new AuthController instance.
      *
@@ -17,7 +21,9 @@ class JWTAuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'checkAuth']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'checkAuth', 'verify', 'resend']]);
+        $this->middleware('signed')->only('verify');
+        $this->middleware('throttle:6,1')->only('verify', 'resend');
     }
 
     /**
@@ -45,6 +51,9 @@ class JWTAuthController extends Controller
             $validator->validated(),
             ['password' => bcrypt($request->password)]
         ));
+
+
+        $customer->sendEmailVerificationNotification();
 
         return response()->json([
             'message' => 'Successfully registered',
@@ -74,6 +83,7 @@ class JWTAuthController extends Controller
         if (! $token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
 
         return $this->createNewToken($token);
     }
@@ -111,8 +121,8 @@ class JWTAuthController extends Controller
     }
 
     public function checkAuth(){
-        $auth = Auth::check();
-        return response()->json(compact('auth'), 200);
+        $user = Auth::user();
+        return response()->json(compact('user'), 200);
     }
 
     /**
@@ -130,6 +140,110 @@ class JWTAuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
+    }
+
+
+
+    // EMAIL VERIFICATION
+
+    /**
+     * Show the email verification notice.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
+     */
+    public function show(Request $request)
+    {
+        return $request->user()->hasVerifiedEmail()
+                        ? redirect($this->redirectPath())
+                        : view('auth.verify');
+    }
+
+    /**
+     * Mark the authenticated user's email address as verified.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function verify(Request $request)
+    {
+        $user = User::find($request->route('id'));
+
+        auth()->login($user);
+
+        if ($request->user()->hasVerifiedEmail()) {
+            return redirect('/customer')->with(['email' => 'Your email is verified!']);
+        }
+
+        if ($request->user()->markEmailAsVerified()) {
+            event(new Verified($request->user()));
+        }
+
+        return $request->wantsJson()
+        ? response(['message' => 'Email has been successfuly verified!', 200])
+        : redirect('/customer')->with(['email' => 'Email has been successfuly verified!']);
+    }
+
+    /**
+     * The user has been verified.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return mixed
+     */
+    protected function verified(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Resend the email verification notification.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function resend(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return response()->json(['message' =>'Your email is already verified!'], 200);
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'Email has been sent!'], 202);
+    }
+
+
+    // PASSWORD RESET
+
+    // send reset link
+    public function forgot() {
+        $credentials = request()->validate(['email' => 'required|email']);
+
+        Password::sendResetLink($credentials);
+
+        return response()->json(["msg" => 'Reset password link sent on your email id.']);
+    }
+
+    // reset password
+    public function reset() {
+        $credentials = request()->validate([
+            'email' => 'required|email',
+            'token' => 'required|string',
+            'password' => 'required|string|confirmed'
+        ]);
+
+        $reset_password_status = Password::reset($credentials, function ($user, $password) {
+            $user->password = $password;
+            $user->save();
+        });
+
+        if ($reset_password_status == Password::INVALID_TOKEN) {
+            return response()->json(["msg" => "Invalid token provided"], 400);
+        }
+
+        return response()->json(["msg" => "Password has been successfully changed"]);
     }
 
 

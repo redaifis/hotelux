@@ -133,6 +133,7 @@ export default {
             $('#editCustomer').modal('show')
         },
         async getCustomers(page = 1) {
+            this.$store.state.isLoading = true
             try {
                 const result = await axios.get(`/api/admin/customers?page=${page}`)
                 this.customers = result.data.customers
@@ -141,9 +142,11 @@ export default {
 
                 console.log(error)
             }
+            this.$store.state.isLoading = false
 
         },
         async getDeletedCustomers(page = 1) {
+            this.$store.state.isLoading = true
             try {
                 const result = await axios.get(`/api/admin/customers?page=${page}`)
                 this.deletedCustomers = result.data.deletedCustomers
@@ -151,9 +154,11 @@ export default {
                 console.log(error)
             }
 
+            this.$store.state.isLoading = false
         },
 
         async deleteCustomer(customerId) {
+            this.$store.state.isLoading = true
             if (confirm('Do you want to proceed and delete this customer?')) {
                 try {
                     const deletedCustomer = await axios.delete(`/api/admin/customers/${customerId}`)
@@ -165,12 +170,14 @@ export default {
                 }
             }
 
+            this.$store.state.isLoading = false
         },
 
 
 
 
         async getDeletedCustomers(page = 1) {
+            this.$store.state.isLoading = true
             try {
                 const result = await axios.get(`/api/admin/deleted/customers?page=${page}`)
                 this.deletedCustomers = result.data.deletedCustomers
@@ -178,8 +185,10 @@ export default {
                 console.log(error)
             }
 
+            this.$store.state.isLoading = false
         },
         async restoreDeletedCustomer(customerId){
+            this.$store.state.isLoading = true
             try {
                 const result = await axios.put(`/api/admin/customers/${customerId}/restore`)
                 this.customer = result.data.customer
@@ -189,9 +198,11 @@ export default {
                 console.log(error)
             }
 
+            this.$store.state.isLoading = false
         },
 
         async permaDeleteCustomer(customerId){
+            this.$store.state.isLoading = true
             if(confirm('Do you want to proceed and permanently delete this record?'))
                 try {
                     const result = await axios.delete(`/api/admin/customers/${customerId}/delete`)
@@ -199,6 +210,7 @@ export default {
                 } catch (error) {
                     console.log(error)
                 }
+            this.$store.state.isLoading = false
         },
     },
     mounted() {

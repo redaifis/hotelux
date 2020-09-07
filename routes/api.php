@@ -18,6 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// RESET PASSWORD
+Route::post('/password/reset', 'ForgotPasswordController@reset');
 
 
 // Registration & Login
@@ -31,6 +33,13 @@ Route::group([
     Route::post('refresh', 'JWTAuthController@refresh');
     Route::get('profile', 'JWTAuthController@profile');
 
+    // EMAIL VERFIFICATION
+    Route::get('/email/resend', 'JWTAuthController@resend')->name('verification.resend');
+    Route::get('/email/{id}/{hash}', 'JWTAuthController@verify')->name('verification.verify');
+
+    // PASSWORD RESET
+    Route::post('password/email', 'JWTAuthController@forgot');
+
     // Check authentication
     Route::get('check', 'JWTAuthController@checkAuth');
 });
@@ -38,43 +47,55 @@ Route::group([
 // Admin
 Route::group([
     'middleware' => ['api', 'admin'],
-    'prefix' => 'admin'
+    'prefix' => 'admin',
+    'namespace' => 'Api\v1\Admin',
 ], function ($router) {
     // Rooms
-    Route::apiResource('rooms', 'Api\v1\Admin\RoomController')->except(['update']);
-    Route::get('deleted/rooms', 'Api\v1\Admin\RoomController@deletedRooms');
-    Route::put('rooms/{id}/update', 'Api\v1\Admin\RoomController@update');
-    Route::put('rooms/{id}/restore', 'Api\v1\Admin\RoomController@restore');
-    Route::delete('rooms/{id}/delete', 'Api\v1\Admin\RoomController@permanentDestroy');
+    Route::apiResource('rooms', 'RoomController')->except(['update']);
+    Route::get('deleted/rooms', 'RoomController@deletedRooms');
+    Route::put('rooms/{id}/update', 'RoomController@update');
+    Route::put('rooms/{id}/restore', 'RoomController@restore');
+    Route::delete('rooms/{id}/delete', 'RoomController@permanentDestroy');
 
     // hotel information
-    Route::apiResource('hotel', 'Api\v1\Admin\HotelController');
+    Route::apiResource('hotel', 'HotelController');
 
 
     // Customers
-    Route::apiResource('customers', 'Api\v1\Admin\CustomerController');
-    Route::get('total/customers', 'Api\v1\Admin\CustomerController@totalCustomers');
-    Route::get('deleted/customers', 'Api\v1\Admin\CustomerController@deletedCustomers');
-    Route::put('customers/{id}/restore', 'Api\v1\Admin\CustomerController@restore');
-    Route::delete('customers/{id}/delete', 'Api\v1\Admin\CustomerController@permanentDestroy');
+    Route::apiResource('customers', 'CustomerController');
+    Route::get('total/customers', 'CustomerController@totalCustomers');
+    Route::get('deleted/customers', 'CustomerController@deletedCustomers');
+    Route::put('customers/{id}/restore', 'CustomerController@restore');
+    Route::delete('customers/{id}/delete', 'CustomerController@permanentDestroy');
 
     // Reviews
-    Route::apiResource('reviews', 'Api\v1\Admin\ReviewController');
+    Route::apiResource('reviews', 'ReviewController');
 
 
     // bookings
-    Route::apiResource('bookings', 'Api\v1\Admin\BookingController');
-    Route::get('total/bookings', 'Api\v1\Admin\BookingController@totalBookings');
+    Route::apiResource('bookings', 'BookingController');
+    Route::get('total/bookings', 'BookingController@totalBookings');
 
     // Get dashboard counts
-    Route::get('counts', 'Api\v1\Admin\AdminController@dashboardCounts');
+    Route::get('counts', 'AdminController@dashboardCounts');
+
+    // Profile
+    Route::put('profile/{id}', 'AdminController@updateProfile');
+    Route::put('password/{id}', 'AdminController@updatePassword');
+
 });
 
 // Customer requests
-Route::group(['prefix' => 'customer', 'middleware' => 'auth:api'], function () {
+Route::group([
+    'prefix' => 'customer',
+    'middleware' => 'auth:api'
+], function () {
     Route::put('profile/{id}', 'Api\v1\Customer\CustomerController@updateProfile');
-    Route::put('profile/password/{id}', 'Api\v1\Customer\CustomerController@updatePassword');
+    Route::put('password/{id}', 'Api\v1\Customer\CustomerController@updatePassword');
     Route::apiResource('bookings', 'Api\v1\Customer\BookingController');
+
+    // reviews
+    Route::apiResource('reviews', 'Api\v1\Customer\ReviewController');
 });
 
 // Rooms
@@ -82,6 +103,7 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'rooms'
 ], function ($router) {
+    Route::get('recommanded', 'Api\v1\RoomController@recommandedRooms');
     Route::get('search', 'Api\v1\RoomController@search');
     Route::apiResource('/', 'Api\v1\RoomController')->only(['index', 'show']);
     Route::get('/{id}', 'Api\v1\RoomController@show');

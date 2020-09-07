@@ -84,6 +84,7 @@ export default {
     },
     methods:{
         async getHotelInfo(){
+            this.$store.state.isLoading = true
 
             try {
                 const hotel = await axios.get(`/api/admin/hotel`, this.hotel)
@@ -92,9 +93,11 @@ export default {
             } catch (error) {
                 console.log(error)
             }
+            this.$store.state.isLoading = false
 
         },
         async storeHotelInfo(){
+            this.$store.state.isLoading = true
 
             try {
                 const hotel = await axios.post(`/api/admin/hotel`, this.hotel)
@@ -102,6 +105,7 @@ export default {
             } catch (error) {
                 console.log(error)
             }
+            this.$store.state.isLoading = false
 
         }
     },

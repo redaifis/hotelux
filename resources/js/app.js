@@ -54,6 +54,7 @@ const routes = [
   { path: '/customer/bookings', component: require('./app/customer/views/BookingsList.vue').default },
   { path: '/customer/bookings/:id', component: require('./app/customer/views/Booking.vue').default },
   { path: '/customer/Profile', component: require('./app/customer/views/Profile.vue').default },
+  { path: '/customer/reviews', component: require('./app/customer/views/ReviewsList.vue').default },
 ]
 
 const router = new VueRouter({

@@ -11,7 +11,7 @@ use Laravel\Cashier\Billable;
 // JWT contract
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use Notifiable, Billable, SoftDeletes;
 

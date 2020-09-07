@@ -47,7 +47,7 @@ export default {
     methods:{
         async getRecommandedRooms(){
             try {
-                const result = await axios.get('/api/rooms', {recommanded: true})
+                const result = await axios.get('/api/rooms/recommanded')
                 this.recommandedRooms = result.data.rooms
             } catch (error) {
                 console.log(error)

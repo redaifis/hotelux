@@ -38,7 +38,7 @@ class BookingController extends Controller
 
         $days = [Carbon::today()->subDays(6)->format('M d') , Carbon::today()->subDays(5)->format('M d') , Carbon::today()->subDays(4)->format('M d') ,Carbon::today()->subDays(3)->format('M d') , Carbon::today()->subDays(2)->format('M d') , Carbon::today()->subDays(1)->format('M d') , Carbon::today()->format('M d')];
 
-        $bookings = Booking::whereHas('invoice')->with('invoice')->whereBetween('created_at', [Carbon::today()->subDays(6), Carbon::today()])->orderBy('created_at')->get()->groupBy(function ($item) {
+        $bookings = Booking::whereHas('invoice')->with('invoice')->whereBetween('created_at', [Carbon::today()->subDays(6), Carbon::today()->addDay()])->orderBy('created_at')->get()->groupBy(function ($item) {
             return $item->created_at->format('M d');
         })->toArray();
 

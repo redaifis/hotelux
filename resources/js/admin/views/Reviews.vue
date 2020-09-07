@@ -70,14 +70,17 @@ export default {
     }),
     methods:{
         async getReviews(page = 1){
+            this.$store.state.isLoading = true
             try {
                 const reviews = await axios.get(`/api/admin/reviews?page=${page}`)
                 this.reviews = reviews.data.reviews
             } catch (error) {
                 if(error.response.status === 401) this.$store.dispatch('logout')
             }
+            this.$store.state.isLoading = false
         },
         async approveReview(review_id){
+            this.$store.state.isLoading = true
             if(confirm('Approve this review?'))
                 try {
                     const review = await axios.put(`/api/admin/reviews/${review_id}`, { approval: 1 })
@@ -86,8 +89,10 @@ export default {
                 } catch (error) {
                     if(error.response.status === 401) this.$store.dispatch('logout')
                 }
+            this.$store.state.isLoading = false
         },
         async rejectReview(review_id){
+            this.$store.state.isLoading = true
             if(confirm('Reject this review?'))
                 try {
                     const review = await axios.put(`/api/admin/reviews/${review_id}`, { approval: 0 })
@@ -96,8 +101,10 @@ export default {
                 } catch (error) {
                     if(error.response.status === 401) this.$store.dispatch('logout')
                 }
+            this.$store.state.isLoading = false
         },
         async deleteReview(review_id){
+            this.$store.state.isLoading = true
             if(confirm('Delete this review?'))
                 try {
                     const review = await axios.delete(`/api/admin/reviews/${review_id}`)
@@ -106,6 +113,7 @@ export default {
                 } catch (error) {
                     if(error.response.status === 401) this.$store.dispatch('logout')
                 }
+            this.$store.state.isLoading = false
         },
         showReview(review){
             if(this.review = review) $('#showReview').modal('show')

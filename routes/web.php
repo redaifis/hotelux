@@ -14,9 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 // register & login page
 Route::get('/login', 'MainController@login')->name('login');
 Route::get('/register', 'MainController@register')->name('register');
+
+// RESET PASSWORD
+Route::view('/reset_password', 'app.auth.resetPassword')->name('password.reset');
 
 Route::get('/', 'MainController@landingPage');
 

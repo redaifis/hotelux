@@ -91,13 +91,27 @@
         </div>
 
     </div>
+
+
+    <loading
+    :active.sync="$store.state.isLoading"
+    :is-full-page="true"
+    :color="'#EAAE49'"
+    :loader="'bars'" />
+
 </div>
 </template>
 
 <script>
-// import 'vue-router'
+// Import VueLoading component
+import Loading from 'vue-loading-overlay';
+// Import VueLoading stylesheet
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 export default {
+    components:{
+        Loading,
+    },
     methods: {
         toggleSidebar() {
             $("body").toggleClass("sb-sidenav-toggled");

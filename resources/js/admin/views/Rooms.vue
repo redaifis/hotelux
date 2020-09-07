@@ -158,6 +158,7 @@ export default {
         },
 
         async deleteRoom(roomId) {
+            this.$store.state.isLoading = true
             if (confirm('Do you want to proceed and delete this room?')) {
                 try {
                     const deletedRoom = await axios.delete(`/api/admin/rooms/${roomId}`)
@@ -168,9 +169,11 @@ export default {
                     console.log(error)
                 }
             }
+            this.$store.state.isLoading = false
 
         },
         async getRooms(page = 1) {
+            this.$store.state.isLoading = true
             try {
                 const result = await axios.get(`/api/admin/rooms?page=${page}`)
                 this.rooms = result.data.rooms
@@ -179,19 +182,23 @@ export default {
                 if(error.response.status === 401) this.$store.dispatch('logout')
 
             }
+            this.$store.state.isLoading = false
 
         },
 
         async getDeletedRooms(page = 1) {
+            this.$store.state.isLoading = true
             try {
                 const result = await axios.get(`/api/admin/deleted/rooms?page=${page}`)
                 this.deletedRooms = result.data.deletedRooms
             } catch (error) {
                 console.log(error)
             }
+            this.$store.state.isLoading = false
 
         },
         async restoreDeletedRoom(roomId){
+            this.$store.state.isLoading = true
             if(confirm('Restore this room?'))
                 try {
                     const result = await axios.put(`/api/admin/rooms/${roomId}/restore`)
@@ -201,10 +208,13 @@ export default {
                 } catch (error) {
                     console.log(error)
                 }
+            this.$store.state.isLoading = false
 
         },
 
         async permaDeleteRoom(roomId){
+            this.$store.state.isLoading = true
+
             if(confirm('Do you want to proceed and permanently delete this room?'))
                 try {
                     const result = await axios.delete(`/api/admin/rooms/${roomId}/delete`)
@@ -212,6 +222,8 @@ export default {
                 } catch (error) {
                     console.log(error)
                 }
+            this.$store.state.isLoading = false
+
         },
         resetInputs() {
             // reseting the inputs

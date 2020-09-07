@@ -102,7 +102,7 @@
                             </div>
 
                             <div class="form-group ">
-                                <label for="email">Email</label>
+                                <label for="email">Email address</label>
                                 <input v-model="newUser.email" type="email" class="form-control" name="email" id="email" placeholder="email" required />
                             </div>
 
@@ -150,6 +150,7 @@
                                 </div>
 
                             </div> -->
+
                             <div class="lds-ring d-block m-auto" v-if="isLoading"><div></div><div></div><div></div><div></div></div>
                             <button type="submit" :disabled="isLoading" class="btn btn-primary rounded-0">Sign up </button>
                         </form>
@@ -182,6 +183,9 @@
                             <div class="alert alert-error" role="alert" v-show="userToLogin.error.length > 0">
                                 <span>{{userToLogin.error}}</span>
                             </div>
+
+                            <p>Forgot password? <a href="/reset_password">Click here</a></p>
+
                             <div class="lds-ring d-block m-auto" v-if="isLoading"><div></div><div></div><div></div><div></div></div>
                             <button type="submit" :disabled="isLoading" class="btn btn-primary d-flex rounded-0">Login</button>
                         </form>

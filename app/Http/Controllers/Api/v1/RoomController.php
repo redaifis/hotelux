@@ -15,14 +15,20 @@ class RoomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if($request->recommanded){
-            $rooms = Room::orderByDesc('created_at')->recommanded()->limit(6)->get();
-            return response()->json(compact('rooms'), 200);
-        }
+
         $rooms = Room::orderByDesc('created_at')->limit(6)->get();
         return response()->json(compact('rooms'), 200);
+    }
+
+
+    public function recommandedRooms(){
+        $rooms = Room::orderByDesc('created_at')
+        ->whereHas('reviews', function($q){
+            $q->where('rating', '>=', 4);
+        })->limit(6)->get();
+        return response(compact('rooms'), 200);
     }
 
 

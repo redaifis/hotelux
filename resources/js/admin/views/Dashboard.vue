@@ -96,6 +96,7 @@ export default {
 
     methods: {
         async getBookings() {
+            this.$store.state.isLoading = true;
             this.bookingsData.isLoaded = false;
             try {
                 const bookingsList = await axios.get("/api/admin/total/bookings");
@@ -123,9 +124,12 @@ export default {
                 })
                 this.bookingsData.isLoaded = true;
                 this.revenueData.isLoaded = true;
+
             } catch (e) {
                 console.error(e);
             }
+            this.$store.state.isLoading = false
+
         }
     },
     mounted() {
